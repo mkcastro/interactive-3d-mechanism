@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>3D Mechanism Visualization</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+    <h1>Interactive 3D Mechanism</h1>
+
+    <div id="plotDiv"></div>
+    <input type="range" min="0" max="1" step="0.01" id="timeSlider" value="0">
+
+    <script>
+        let t = 0;
+        let z = 0;
+
+        const layout = {
+            margin: {
+                l: 0,
+                r: 0,
+                b: 0,
+                t: 0
+            },
+            scene: {
+                xaxis: {range: [-1, 7]},
+                yaxis: {range: [-1, 7]},
+                zaxis: {range: [-1, 9]},
+                aspectmode: "cube"
+            }
+        };
+
+        function calculateCoords(t) {
+            let x_P1 = 0;
+            let y_P1 = 6 - 6 * t;
+            let z_P1 = t >= 0.8 ? 8 * (t - 0.8) : 0;
+
+            let x_P2 = 6 * t;
+            let y_P2 = 0;
+            let z_P2 = t >= 0.8 ? 8 * (t - 0.8) : 0;
+
+            return {
+                x: [x_P1, x_P2],
+                y: [y_P1, y_P2],
+                z: [z_P1, z_P2]
+            };
+        }
+
+        let initialCoords = calculateCoords(0);
+        let trace = {
+            x: initialCoords.x,
+            y: initialCoords.y,
+            z: initialCoords.z,
+            mode: 'markers+lines',
+            type: 'scatter3d'
+        };
+
+        Plotly.newPlot('plotDiv', [trace], layout);
+
+        document.getElementById('timeSlider').addEventListener('input', function(evt) {
+            t = parseFloat(evt.target.value);
+            let newCoords = calculateCoords(t);
+            trace.x = newCoords.x;
+            trace.y = newCoords.y;
+            trace.z = newCoords.z;
+            Plotly.react('plotDiv', [trace], layout);
+        });
+    </script>
+
+</body>
+</html>
